@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.token;
   if (authHeader) {
+    // take the 2nd element
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.JWT_SEC, (err, user) => {
       if (err) res.status(403).json("token is authenticated");
@@ -34,4 +35,4 @@ const verifyTokenAndAdmin = (req, res, next) => {
   });
 };
 
-module.exports = { verifyToken, verifyTokenAndAuth,verifyTokenAndAdmin};
+module.exports = { verifyToken, verifyTokenAndAuth, verifyTokenAndAdmin };
