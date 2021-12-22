@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 // register
 router.post("/register", async (req, res) => {
+  // create instance of user
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
@@ -16,7 +17,7 @@ router.post("/register", async (req, res) => {
 
   try {
     const savedUser = await newUser.save();
-    res.send(200).json(savedUser);
+    res.send(201).json(savedUser);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -28,6 +29,16 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
     !user && res.status(401).json("Wrong credentials");
 
+    // password hashing
+    const hashedpassword = CryptoJS.AES.decrypt(
+      user.password,
+      process.env.PASS_SEC
+    );
+    // commuting the original password
+    const Originalpassword = hashedpassword.toString();
+    Originalpassword !== req.body.password &&
+      res.status(401).json("Wrong credentials");
+    // hide password from getting in database
 
     // access token
     const accessToken = jwt.sign(
@@ -38,21 +49,14 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SEC,
       { expiresIn: "3d" }
     );
-    const hashedpassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASS_SEC
-    );
-    const Originalpassword = hashedpassword.toString();
-    Originalpassword !== req.body.password &&
-      res.status(401).json("Wrong credentials");
-    // hide password from getting in database
     const { password, ...others } = user._doc;
 
-    res.status(200).json({others, accessToken});
+    res.status(200).json({ ...others, accessToken });
   } catch (error) {
     res.status(500).json(err);
   }
 
+  // not included in the sourcecode
   try {
     const savedUser = await newUser.save();
     res.send(200).json(savedUser);
