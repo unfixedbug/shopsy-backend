@@ -96,7 +96,9 @@ router.get("/income", verifyTokenAndAdmin, (req, res) => {
       },
     ]);
     res.status(200).json(income);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
