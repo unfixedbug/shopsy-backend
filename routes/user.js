@@ -1,7 +1,10 @@
-const { verify } = require("crypto");
+const User = require("../models/User");
 const router = require("express").Router();
-const {verifyTokenAndAuth,verifyTokenAndAdmin,verifyToken} = require("./verifyToken");
-
+const {
+  verifyTokenAndAuth,
+  verifyTokenAndAdmin,
+  verifyToken,
+} = require("./verifyToken");
 
 // update
 router.put("/:id", verifyTokenAndAuth, async (req, res) => {
@@ -36,7 +39,7 @@ router.delete("/:id", verifyTokenAndAuth, async (req, res) => {
 });
 
 // get user
-router.get("/:id", verifyTokenAndAdmin, async (req, res) => {
+router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const { password, ...others } = user._doc;
@@ -49,7 +52,9 @@ router.get("/:id", verifyTokenAndAdmin, async (req, res) => {
 
 // get all users
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
+  const query = req.query.new;
   try {
+    // sorting the users
     const users = query
       ? await User.find().sort({ _id: -1 }).limit(5)
       : await User.find();
@@ -61,7 +66,7 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 });
 
 // get user stats for admin only
-router.get("/status", verifyTokenAndAdmin, async (req, res) => {
+router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
   try {
