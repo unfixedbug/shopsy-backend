@@ -9,8 +9,8 @@ const orderRoute = require("./routes/order");
 const stripeRoute = require("./routes/stripe");
 const cors = require("cors");
 // setting env file
-dotenv.config();
 const dotenv = require("dotenv");
+dotenv.config();
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to db"))
