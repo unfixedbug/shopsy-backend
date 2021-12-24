@@ -1,3 +1,4 @@
+const { request } = require("express");
 const Order = require("../models/Order");
 const {
   verifyTokenAndAuth,
@@ -66,6 +67,7 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 
 // get monthly income(stats)
 router.get("/income", verifyTokenAndAdmin,async (req, res) => {
+  const productId = request.query.pid;
   const date = new Date();
   const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
   const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
