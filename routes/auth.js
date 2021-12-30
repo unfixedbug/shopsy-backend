@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
 
   try {
     const savedUser = await newUser.save();
-    res.send(201).json(savedUser);
+    res.status(201).json(savedUser);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -35,7 +35,7 @@ router.post("/login", async (req, res) => {
       process.env.PASS_SEC
     );
     // commuting the original password
-    const Originalpassword = hashedpassword.toString();
+    const Originalpassword = hashedpassword.toString(CryptoJS.enc.Utf8);
     Originalpassword !== req.body.password &&
       res.status(401).json("Wrong credentials");
     // hide password from getting in database
@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
     const { password, ...others } = user._doc;
 
     res.status(200).json({ ...others, accessToken });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json(err);
   }
 
