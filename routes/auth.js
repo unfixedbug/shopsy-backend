@@ -30,12 +30,12 @@ router.post("/login", async (req, res) => {
     !user && res.status(401).json("Wrong credentials");
 
     // password hashing
-    const hashedpassword = CryptoJS.AES.decrypt(
+    const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.PASS_SEC
     );
     // commuting the original password
-    const Originalpassword = hashedpassword.toString(CryptoJS.enc.Utf8);
+    const Originalpassword = hashedPassword.toString(CryptoJS.enc.Utf8);
     Originalpassword !== req.body.password &&
       res.status(401).json("Wrong credentials");
     // hide password from getting in database
@@ -52,14 +52,6 @@ router.post("/login", async (req, res) => {
     const { password, ...others } = user._doc;
 
     res.status(200).json({ ...others, accessToken });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-
-  // not included in the sourcecode
-  try {
-    const savedUser = await newUser.save();
-    res.send(200).json(savedUser);
   } catch (err) {
     res.status(500).json(err);
   }
